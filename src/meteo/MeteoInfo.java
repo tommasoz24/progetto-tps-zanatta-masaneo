@@ -99,22 +99,18 @@ public class MeteoInfo extends Container {
 		minLabel.setText("Minime: " + main.getTempMin());
 		minMaxCont.add(minLabel);
 
-		// add today's highest temperature to minMax container
 		maxLabel.setText("Massime: " + main.getTempMax());
 		minMaxCont.add(maxLabel);
 
-		// add minMax container to the center of the main frame
 		add(minMaxCont);
 	}
 
 	public void listAllCurrentConditions() throws MalformedURLException {
 		int length = weathers.length;
 
-		// if there is only one weather condition, display the corresponding latitude and longitude
-		// and compass direction
+
 		if (length == 1) {
 
-			// increase the length so GridLayout will create a row for the lat/log label
 			length++;
 
 			char latsym = 'N';
@@ -135,13 +131,11 @@ public class MeteoInfo extends Container {
 
 		conditionsCont.setLayout(new GridLayout(length, 1));
 
-		// create all features using in loop so only create each feature once
+
 		EmptyBorder border = new EmptyBorder(-3, 0, -11, 0);
 		Font font = new Font("Calibri", Font.PLAIN, 15);
 		Color color = Color.DARK_GRAY;
 
-		// add all weather conditions and descriptions that currently exist,
-		// with corresponding pictures
 		for (Meteo i : weathers) {
 			LoadableJLabel label = new LoadableJLabel();
 			label.setBorder(border);
@@ -154,7 +148,6 @@ public class MeteoInfo extends Container {
 			conditionsCont.add(label);
 		}
 
-		// add the weather condition container to the bottom of the main frame
 		add(conditionsCont);
 	}
 }

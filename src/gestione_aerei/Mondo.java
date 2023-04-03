@@ -63,25 +63,23 @@ public class Mondo extends JFrame {
         latCorrente = 40.633785;
         logCorrente = -73.779277;
 
-        // create window icon (only visible on mac when minimize window)
         setIconImage(ImageIO.read(Objects.requireNonNull(getClass().getResource("immagini/airplane.jpg"))));
         setFocusable(true);
 
         menu = new MenuBarMondo(this);
-        // don't want setJMenuBar(menu); because by default it adds it to north
+
         add(menu, BorderLayout.SOUTH);
 
-        // default velocita and direzione
+
         direzione = LEFT;
         velocita = 0;
 
-        // game state controls
+
         autoAtterraggio = false;
         suono = true;
         atterraggio = false;
         pausa = true;
 
-        // create the three panels and set up their location on the screen
         mappaCentrale = new MappaCentrale(latCorrente, logCorrente);
         add(mappaCentrale, BorderLayout.CENTER);
         mappaLaterale = new MappaLaterale(latCorrente, logCorrente, direzione);
@@ -141,10 +139,10 @@ public class Mondo extends JFrame {
         actionMap.put("directionDown", new AzionaDirezione(DOWN));
         actionMap.put("directionRight", new AzionaDirezione(RIGHT));
         actionMap.put("directionLeft", new AzionaDirezione(LEFT));
-        // actionMap.put("togglePause", new PauseAction());
+
     }
 
-    // setters & getters
+
     public void setAutoAtterraggio() {
         autoAtterraggio = true;
     }
@@ -174,12 +172,12 @@ public class Mondo extends JFrame {
                 case RIGHT -> logCorrente += difference;
             }
 
-            // update all panels
+
             mappaCentrale.updateMap(velocita, latCorrente, logCorrente, false);
             weather.updateCurrent(latCorrente, logCorrente);
             mappaLaterale.updateMap(velocita, latCorrente, logCorrente);
 
-            // determine if reached destination
+
             if (autoAtterraggio && velocita > 0) {
                 raggiuntaDestinazione();
             }

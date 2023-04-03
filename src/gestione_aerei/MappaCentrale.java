@@ -22,7 +22,6 @@ public class MappaCentrale extends PannelloMappa {
 
     private final Format formatter;
 
-    // menu
     private final MenuZoom zoomPanel;
 
     // images
@@ -34,7 +33,6 @@ public class MappaCentrale extends PannelloMappa {
     private final Image speedometer;
     private final Image alien;
 
-    // fonts
     private final Font latLogFont;
     private final Font speedFont;
     private final Font alienFont;

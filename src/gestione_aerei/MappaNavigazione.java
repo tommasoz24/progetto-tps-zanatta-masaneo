@@ -31,7 +31,6 @@ public class MappaNavigazione extends PannelloMappa {
 		latCorrente = latIniziale;
 		logCorrente = logIniziale;
 
-		// set up menu bar
 		JMenuBar menu = new JMenuBar();
 		view = "terreno";
 		menu.add(new MenuView(this));
