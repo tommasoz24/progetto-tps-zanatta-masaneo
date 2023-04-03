@@ -1,6 +1,6 @@
-package weather;
+package meteo;
 
-public class WeatherMain {
+public class MeteoMain {
 	private double temp;
 	private double temp_min;
 	private double temp_max;

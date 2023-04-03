@@ -1,4 +1,4 @@
-package weather;
+package meteo;
 
 import java.awt.Color;
 import java.awt.Container;
@@ -6,6 +6,7 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.io.Serial;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DecimalFormat;
@@ -19,22 +20,23 @@ import javax.swing.border.EmptyBorder;
 import gestione_aerei.ImgDownloadThread;
 import gestione_aerei.LoadableJLabel;
 
-public class WeatherInfo extends Container {
+public class MeteoInfo extends Container {
+	@Serial
 	private static final long serialVersionUID = 1L;
-	private Weather[] weathers;
-	private Container currentCont;
-	private LoadableJLabel currentWeather;
-	private Container conditionsCont;
-	private Container minMaxCont;
-	private JLabel minLabel;
-	private JLabel maxLabel;
-	private double lat;
-	private double log;
-	private Format formatter;
-	private Color cold;
-	private Color hot;
+	private Meteo[] weathers;
+	private final Container currentCont;
+	private final LoadableJLabel currentWeather;
+	private final Container conditionsCont;
+	private final Container minMaxCont;
+	private final JLabel minLabel;
+	private final JLabel maxLabel;
+	private final double lat;
+	private final double log;
+	private final Format formatter;
+	private final Color cold;
+	private final Color hot;
 
-	public WeatherInfo(double lat, double log) throws MalformedURLException {
+	public MeteoInfo(double lat, double log) throws MalformedURLException {
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
 		currentCont = new Container();
@@ -44,32 +46,31 @@ public class WeatherInfo extends Container {
 		maxLabel = new JLabel();
 		currentWeather = new LoadableJLabel();
 
-		// decode all colors so don't need to keep decoding them
 		cold = Color.decode("#0099FF");
 		hot = Color.decode("#FF5050");
 
-		// create thread that uses displayWeather
+
 		formatter = new DecimalFormat("#0.###");
 		this.lat = lat;
 		this.log = log;
 		new DownloadThread(this, lat, log).start();
 	}
 
-	public void displayWeather(WeatherNow now) throws MalformedURLException {
-		weathers = now.getWeather();
+	public void displayWeather(MeteoNow now) throws MalformedURLException {
+		weathers = now.getMeteo();
 		setCurrentWeather(now);
 		addMinMax(now);
 		listAllCurrentConditions();
 	}
 
-	public void setCurrentWeather(WeatherNow now) throws MalformedURLException {
+	public void setCurrentWeather(MeteoNow now) throws MalformedURLException {
 		currentCont.setLayout(new GridBagLayout());
 
-		// retrieve the current temperature
+
 		double temp = now.getMain().getTemp();
 		currentWeather.setText(temp + "°" + 'F');
 
-		// temperature turn red if hot and blue if cold
+
 		if (temp <= 40) {
 			currentWeather.setForeground(cold);
 		}
@@ -77,11 +78,11 @@ public class WeatherInfo extends Container {
 			currentWeather.setForeground(hot);
 		}
 
-		// format current temperature
+
 		currentWeather.setFont(new Font("Gill Sans", Font.BOLD, 30));
 		currentWeather.setBorder(new EmptyBorder(-10, 0, 0, 0));
 
-		// add corresponding picture with thread
+
 		String urlString = "http://openweathermap.org/img/w/" + weathers[0].getIcon() + ".png";
 		new ImgDownloadThread(new URL(urlString), currentWeather).start();
 
@@ -89,12 +90,12 @@ public class WeatherInfo extends Container {
 		add(currentCont);
 	}
 
-	public void addMinMax(WeatherNow now) {
+	public void addMinMax(MeteoNow now) {
 		minMaxCont.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 0));
 
-		WeatherMain main = now.getMain();
+		MeteoMain main = now.getMain();
 
-		// add today's lowest temperature to minMax container
+
 		minLabel.setText("Minime: " + main.getTempMin());
 		minMaxCont.add(minLabel);
 
@@ -141,7 +142,7 @@ public class WeatherInfo extends Container {
 
 		// add all weather conditions and descriptions that currently exist,
 		// with corresponding pictures
-		for (Weather i : weathers) {
+		for (Meteo i : weathers) {
 			LoadableJLabel label = new LoadableJLabel();
 			label.setBorder(border);
 			label.setText(i.getMain() + ": " + i.getDescription());

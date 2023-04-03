@@ -1,6 +1,6 @@
-package weather;
+package meteo;
 
-public class Weather {
+public class Meteo {
 	private String main;
 	private String description;
 	private String icon;

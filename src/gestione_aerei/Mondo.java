@@ -1,6 +1,6 @@
 package gestione_aerei;
 
-import weather.WeatherCont;
+import meteo.MeteoCont;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -27,7 +27,7 @@ public class Mondo extends JFrame {
     private final DialogoIstruzioni inst;
 
     private final MappaLaterale mappaLaterale;
-    private final WeatherCont weather;
+    private final MeteoCont weather;
     private final MappaCentrale mappaCentrale;
 
     private double latCorrente;
@@ -86,7 +86,7 @@ public class Mondo extends JFrame {
         add(mappaCentrale, BorderLayout.CENTER);
         mappaLaterale = new MappaLaterale(latCorrente, logCorrente, direzione);
         add(mappaLaterale, BorderLayout.WEST);
-        weather = new WeatherCont(latCorrente, logCorrente);
+        weather = new MeteoCont(latCorrente, logCorrente);
         add(weather, BorderLayout.EAST);
         setupTastiera();
 

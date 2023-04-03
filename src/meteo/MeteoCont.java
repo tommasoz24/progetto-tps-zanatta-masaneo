@@ -1,27 +1,29 @@
-package weather;
+package meteo;
 
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.io.IOException;
+import java.io.Serial;
 import java.net.MalformedURLException;
 
-public class WeatherCont extends Container {
+public class MeteoCont extends Container {
+	@Serial
 	private static final long serialVersionUID = 1L;
-	private WeatherBox depWeather;
-	private WeatherBox desWeather;
-	private WeatherBox currWeather;
+	private final MeteoBox depWeather;
+	private final MeteoBox desWeather;
+	private final MeteoBox currWeather;
 
-	public WeatherCont(double currentLat, double currentLog)
+	public MeteoCont(double currentLat, double currentLog)
 			throws MalformedURLException {
 		setPreferredSize(new Dimension(260, 600));
 		setLayout(new GridLayout(3, 1));
 
-		depWeather = new WeatherBox("Partenza", currentLat, currentLog);
+		depWeather = new MeteoBox("Partenza", currentLat, currentLog);
 		add(depWeather);
-		desWeather = new WeatherBox("Destinazione", 0.0, 0);
+		desWeather = new MeteoBox("Destinazione", 0.0, 0);
 		add(desWeather);
-		currWeather = new WeatherBox("Posizione attuale", currentLat, currentLog);
+		currWeather = new MeteoBox("Posizione attuale", currentLat, currentLog);
 		add(currWeather);
 	}
 
