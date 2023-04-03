@@ -72,10 +72,10 @@ public class MappaNavigazione extends PannelloMappa {
 
 		// set the direction according the the arrow key or number the user pressed
 		switch (direction) {
-			case 2 -> aereo.changeY(difference);
-			case 4 -> aereo.changeX(-difference);
-			case 6 -> aereo.changeX(difference);
-			case 8 -> aereo.changeY(-difference);
+			case 2 -> aereo.setY(difference);
+			case 4 -> aereo.setX(-difference);
+			case 6 -> aereo.setX(difference);
+			case 8 -> aereo.setY(-difference);
 			default -> throw new IllegalStateException("Unexpected value: " + direction);
 		}
 
@@ -92,7 +92,7 @@ public class MappaNavigazione extends PannelloMappa {
 	}
 
 	public void setDegree(int direction) {
-		aereo.setDegree(direction);
+		aereo.setGradi(direction);
 	}
 
 	public void newMap(double newLat, double newLog) throws MalformedURLException {

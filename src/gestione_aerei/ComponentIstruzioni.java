@@ -5,6 +5,7 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.Serial;
+import java.util.Objects;
 
 import javax.imageio.ImageIO;
 import javax.swing.JComponent;
@@ -12,10 +13,10 @@ import javax.swing.JComponent;
 public class ComponentIstruzioni extends JComponent {
 	@Serial
 	private static final long serialVersionUID = 1L;
-	private BufferedImage img;
+	private final BufferedImage img;
 
 	public ComponentIstruzioni() throws IOException {
-		img = ImageIO.read(getClass().getResource("immagini/inst4.jpg"));
+		img = ImageIO.read(Objects.requireNonNull(getClass().getResource("immagini/inst4.jpg")));
 		repaint();
 	}
 
@@ -24,10 +25,9 @@ public class ComponentIstruzioni extends JComponent {
 		g.drawImage(img, 0, 0, getWidth(), getHeight(), null);
 		g.setColor(Color.WHITE);
 
-		// use variables to maintain consistent spacing
-		int i = 15; // initial line location
-		int j = 18; // line spacing
-		int k = 30; // para spacing
+		int i = 15;
+		int j = 18;
+		int k = 30;
 
 		g.drawString("Benvenuti nella nuova simulazione di volo avanzata!", 280, i);
 

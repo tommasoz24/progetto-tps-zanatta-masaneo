@@ -12,29 +12,29 @@ import javax.imageio.ImageIO;
 public class Aereo {
 	private int x;
 	private int y;
-	private int degrees;
-	private final BufferedImage planeImg;
+	private int gradi;
+	private final BufferedImage aereoImg;
 
 	public Aereo(int x, int y) throws IOException {
 		this.x = x;
 		this.y = y;
-		planeImg = ImageIO.read(Objects.requireNonNull(getClass().getResource("immagini/airplane.jpg")));
+		aereoImg = ImageIO.read(Objects.requireNonNull(getClass().getResource("immagini/airplane.jpg")));
 	}
 
-	public void setDegree(int direction) {
-		switch (direction) {
-			case 2 -> degrees = 135;
-			case 4 -> degrees = -135;
-			case 6 -> degrees = 45;
-			case 8 -> degrees = -45;
+	public void setGradi(int direzione) {
+		switch (direzione) {
+			case 2 -> gradi = 135;
+			case 4 -> gradi = -135;
+			case 6 -> gradi = 45;
+			case 8 -> gradi = -45;
 		}
 	}
 
 	public void paintComponent(Graphics g) {
-		AffineTransform tx = AffineTransform.getRotateInstance(Math.toRadians(degrees), (double) planeImg.getWidth() / 2,
-				(double) planeImg.getHeight() / 2);
+		AffineTransform tx = AffineTransform.getRotateInstance(Math.toRadians(gradi), (double) aereoImg.getWidth() / 2,
+				(double) aereoImg.getHeight() / 2);
 		AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
-		g.drawImage(op.filter(planeImg, null), x, y, 20, 20, null);
+		g.drawImage(op.filter(aereoImg, null), x, y, 20, 20, null);
 	}
 
 	public void reset() {
@@ -42,11 +42,11 @@ public class Aereo {
 		y = 272 / 2 - 10;
 	}
 
-	public void changeY(int difference) {
+	public void setY(int difference) {
 		y += difference;
 	}
 
-	public void changeX(int difference) {
+	public void setX(int difference) {
 		x += difference;
 	}
 

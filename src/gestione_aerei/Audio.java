@@ -7,12 +7,12 @@ import java.util.concurrent.CountDownLatch;
 
 public class Audio extends Thread {
 	private AudioClip click;
-	private int seconds;
+	private int secondi;
 	private boolean loop;
 	private CountDownLatch latch;
 
-	public Audio(CountDownLatch latch, int seconds, String filename, boolean loop) {
-		this.seconds = seconds;
+	public Audio(CountDownLatch latch, int secondi, String filename, boolean loop) {
+		this.secondi = secondi;
 		this.loop = loop;
 		this.latch = latch;
 		URL urlClick = getClass().getResource(filename);
@@ -29,7 +29,7 @@ public class Audio extends Thread {
 		}
 
 		try {
-			sleep(seconds);
+			sleep(secondi);
 		}
 		catch (InterruptedException e) {
 			e.printStackTrace();

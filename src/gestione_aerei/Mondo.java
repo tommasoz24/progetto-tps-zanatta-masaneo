@@ -123,7 +123,7 @@ public class Mondo extends JFrame {
 		destinationLog = endLog;
 		weather.updateAll(currentLat, currentLog, endLat, endLog);
 		mappaLaterale.newTrip(currentLat, currentLog, endLat, endLog);
-		mappaCentrale.updateMap(speed, 0, 0, currentLat, currentLog, false);
+		mappaCentrale.updateMap(speed, currentLat, currentLog, false);
 	}
 
 	public void setUpKeyBindings() {
@@ -194,7 +194,7 @@ public class Mondo extends JFrame {
 			}
 
 			// update all panels
-			mappaCentrale.updateMap(speed, direction, difference, currentLat, currentLog, false);
+			mappaCentrale.updateMap(speed, currentLat, currentLog, false);
 			weather.updateCurrent(currentLat, currentLog);
 			mappaLaterale.updateMap(speed, currentLat, currentLog);
 
@@ -209,7 +209,7 @@ public class Mondo extends JFrame {
 
 	public void reachDestination() throws IOException, InterruptedException {
 		if (Math.abs(currentLat - destinationLat) <= .15 && Math.abs(currentLog - destinationLog) <= .15) {
-			mappaCentrale.updateMap(0, direction, 0, destinationLat, destinationLog, true);
+			mappaCentrale.updateMap(0, destinationLat, destinationLog, true);
 			weather.updateCurrent(destinationLat, destinationLog);
 			mappaLaterale.landPlane(destinationLat, destinationLog);
 			repaint();
