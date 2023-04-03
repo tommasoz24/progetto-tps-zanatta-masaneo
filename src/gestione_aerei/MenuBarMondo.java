@@ -13,7 +13,7 @@ public class MenuBarMondo extends JMenuBar {
 	private static final long serialVersionUID = 1L;
 	private final JButton play;
 	private final MenuTextField location;
-	private final MenuTextField destination;
+	private final MenuTextField destinazione;
 	private final Mondo mondo;
 
 	public MenuBarMondo(Mondo mondo) {
@@ -21,7 +21,7 @@ public class MenuBarMondo extends JMenuBar {
 		setLayout(new FlowLayout(FlowLayout.CENTER, 15, 3));
 
 		JCheckBox mute = new JCheckBox("Muto");
-		ActionListener muteButton = event -> mondo.toggleMute();
+		ActionListener muteButton = event -> mondo.pulsanteMuto();
 		mute.addActionListener(muteButton);
 		add(mute);
 
@@ -29,7 +29,7 @@ public class MenuBarMondo extends JMenuBar {
 		play.setText(">");
 		ActionListener pause = event -> {
 			try {
-				mondo.togglePlay();
+				mondo.pulsantePlay();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -42,13 +42,13 @@ public class MenuBarMondo extends JMenuBar {
 		location = new MenuTextField("Partenza", mondo);
 		add(location);
 
-		destination = new MenuTextField("Destinazione", mondo);
-		add(destination);
+		destinazione = new MenuTextField("Destinazione", mondo);
+		add(destinazione);
 
-		JButton go = new JButton("Go!");
+		JButton go = new JButton("Avvia!");
 		ActionListener click = event -> {
 			try {
-				gobutton();
+				bottoneAvvia();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -59,21 +59,21 @@ public class MenuBarMondo extends JMenuBar {
 		add(Box.createHorizontalStrut(10));
 
 		JButton help = new JButton("?");
-		help.setToolTipText("Open instructions dialog.");
-		ActionListener helpButton = event -> mondo.openInstructions();
+		help.setToolTipText("Apri istruzioni.");
+		ActionListener helpButton = event -> mondo.apriIstruzioni();
 		help.addActionListener(helpButton);
 		add(help);
 	}
 
-	public void gobutton() throws IOException {
-		String adr = location.getText();
-		String adr2 = destination.getText();
-		if (!"Departure".equals(adr) && !"Destination".equals(adr2)) {
-			new AddressThread(mondo, adr, adr2).start();
+	public void bottoneAvvia() throws IOException {
+		String addr = location.getText();
+		String addr2 = destinazione.getText();
+		if (!"Partenza".equals(addr) && !"Destinazione".equals(addr2)) {
+			new AddressThread(mondo, addr, addr2).start();
 			location.reset();
-			destination.reset();
+			destinazione.reset();
 		}
-		mondo.setAutoLand();
+		mondo.setAutoAtterraggio();
 	}
 
 	public void togglePauseText() {

@@ -16,24 +16,24 @@ import javax.swing.JMenuBar;
 public class MappaNavigazione extends PannelloMappa {
 	@Serial
 	private static final long serialVersionUID = 1L;
-	private double currentlat;
-	private double currentlong;
+	private double latCorrente;
+	private double logCorrente;
 	private double diffBuffer;
-	private Aereo aereo;
+	private final Aereo aereo;
 
-	private MenuZoom zoomPanel;
+	private final MenuZoom zoomPanel;
 
-	public MappaNavigazione(double startlat, double startlong) throws IOException {
+	public MappaNavigazione(double latIniziale, double logIniziale) throws IOException {
 		width = 300;
 		height = 272;
 		setPreferredSize(new Dimension(width, height));
 		setLayout(new BorderLayout());
-		currentlat = startlat;
-		currentlong = startlong;
+		latCorrente = latIniziale;
+		logCorrente = logIniziale;
 
 		// set up menu bar
 		JMenuBar menu = new JMenuBar();
-		view = "terrain";
+		view = "terreno";
 		menu.add(new MenuView(this));
 		menu.add(Box.createHorizontalStrut(95));
 		zoomPanel = new MenuZoom(this, 5);
@@ -47,19 +47,16 @@ public class MappaNavigazione extends PannelloMappa {
 		img = ImageIO.read(Objects.requireNonNull(getClass().getResource("immagini/navigationMap.png")));
 	}
 
-	public void update(int speed, int direction, double currentlat, double currentlong) throws MalformedURLException {
-		movePlane(speed, direction, currentlat, currentlong);
+	public void update(int velocita, int direzione, double latCorrente, double logCorrente) throws MalformedURLException {
+		movePlane(velocita, direzione, latCorrente, logCorrente);
 	}
 
-	public void movePlane(int speed, int direction, double currentlat, double currentlong)
+	public void movePlane(int velocita, int direzione, double latCorrente, double logCorrente)
 			throws MalformedURLException {
-		// calculate the amount of pixels the plane should move
-		// according to the degrees longitude the plane is moving on the map
-		// and factoring in the zoom
 		double pixelPerLong = width * Math.pow(2, zoomPanel.zoom - 1) / 360;
 
-		int difference;
-		double diff = (speed / 69.0) * pixelPerLong;
+		int differenza;
+		double diff = (velocita / 69.0) * pixelPerLong;
 		if (diffBuffer != 0) {
 			diff += diffBuffer;
 			diffBuffer = 0;
@@ -68,38 +65,37 @@ public class MappaNavigazione extends PannelloMappa {
 		if (diff % 1 != 0) {
 			diffBuffer = diff % 1;
 		}
-		difference = (int) diff;
+		differenza = (int) diff;
 
-		// set the direction according the the arrow key or number the user pressed
-		switch (direction) {
-			case 2 -> aereo.setY(difference);
-			case 4 -> aereo.setX(-difference);
-			case 6 -> aereo.setX(difference);
-			case 8 -> aereo.setY(-difference);
-			default -> throw new IllegalStateException("Unexpected value: " + direction);
+		switch (direzione) {
+			case 2 -> aereo.setY(differenza);
+			case 4 -> aereo.setX(-differenza);
+			case 6 -> aereo.setX(differenza);
+			case 8 -> aereo.setY(-differenza);
+			default -> throw new IllegalStateException("Valore non valido: " + direzione);
 		}
 
 		int x = aereo.getX();
 		int y = aereo.getY();
 
 		if (x <= 0 || x >= width || y <= 0 || y >= height) {
-			this.currentlat = currentlat;
-			this.currentlong = currentlong;
+			this.latCorrente = latCorrente;
+			this.logCorrente = logCorrente;
 
 			aereo.reset();
-			loadImg();
+			caricaImg();
 		}
 	}
 
-	public void setDegree(int direction) {
+	public void setGradi(int direction) {
 		aereo.setGradi(direction);
 	}
 
-	public void newMap(double newLat, double newLog) throws MalformedURLException {
-		currentlat = newLat;
-		currentlong = newLog;
+	public void nuovaMappa(double nuovaLat, double nuovaLog) throws MalformedURLException {
+		latCorrente = nuovaLat;
+		logCorrente = nuovaLog;
 		aereo.reset();
-		loadImg();
+		caricaImg();
 	}
 
 	public void paintComponent(Graphics g) {
@@ -107,11 +103,11 @@ public class MappaNavigazione extends PannelloMappa {
 		aereo.paintComponent(g);
 	}
 
-	public void loadImg() throws MalformedURLException {
-		String adrhalf = "https://maps.googleapis.com/maps/api/staticmap?center=" + currentlat + "," + currentlong
+	public void caricaImg() throws MalformedURLException {
+		String adrhalf = "https://maps.googleapis.com/maps/api/staticmap?center=" + latCorrente + "," + logCorrente
 				+ "&size=" + width + "x" + height + "&maptype=" + view;
 
-		String airports = "&markers=size:mid%7Ccolor:green%7C" + "atl+airport" + "%7C" + "anc+airport" + "%7C"
+		String aeroporti = "&markers=size:mid%7Ccolor:green%7C" + "atl+airport" + "%7C" + "anc+airport" + "%7C"
 				+ "aus+airport" + "%7C" + "bwi+airport" + "%7C" + "bos+airport" + "%7C" + "clt+airport" + "%7C"
 				+ "mdw+airport" + "%7C" + "ord+airport" + "%7C" + "cvg+airport" + "%7C" + "cle+airport" + "%7C"
 				+ "cmh+airport" + "%7C" + "dfw+airport" + "%7C" + "den+airport" + "%7C" + "dtw+airport" + "%7C"
@@ -131,7 +127,7 @@ public class MappaNavigazione extends PannelloMappa {
 		if (zoom != 0) {
 			zooms = "&zoom=" + zoom;
 		}
-		URL url = new URL(adrhalf + airports + zooms
+		URL url = new URL(adrhalf + aeroporti + zooms
 		// + "&style=feature:road.local%7Celement:geometry"
 		// + "&style=feature:administrative%7Celement:labels"
 				+ "&key=AIzaSyAirHEsA08agmW9uizDvXagTjWS3mRctPE");
@@ -141,6 +137,6 @@ public class MappaNavigazione extends PannelloMappa {
 
 	public void updateView(String view) throws MalformedURLException {
 		this.view = view.toLowerCase();
-		loadImg();
+		caricaImg();
 	}
 }

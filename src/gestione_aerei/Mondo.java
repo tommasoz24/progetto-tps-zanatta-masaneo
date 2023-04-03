@@ -1,6 +1,10 @@
 package gestione_aerei;
 
-import java.awt.BorderLayout;
+import weather.WeatherCont;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
@@ -8,340 +12,291 @@ import java.io.Serial;
 import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
 
-import javax.imageio.ImageIO;
-import javax.swing.AbstractAction;
-import javax.swing.ActionMap;
-import javax.swing.InputMap;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.KeyStroke;
-
-import weather.WeatherCont;
-
 public class Mondo extends JFrame {
-	@Serial
-	private static final long serialVersionUID = 1L;
+    @Serial
+    private static final long serialVersionUID = 1L;
 
-	private static final int UP = 8;
-	private static final int DOWN = 2;
-	private static final int RIGHT = 6;
-	private static final int LEFT = 4;
-	private static final int INCREASE = 3;
-	private static final int DECREASE = -3;
-	
-	protected MenuBarMondo menu;
-	private final DialogoIstruzioni inst;
+    private static final int UP = 8;
+    private static final int DOWN = 2;
+    private static final int RIGHT = 6;
+    private static final int LEFT = 4;
+    private static final int INCREASE = 3;
+    private static final int DECREASE = -3;
 
-	// three panels
-	private final MappaLaterale mappaLaterale;
-	private final WeatherCont weather;
-	private final MappaCentrale mappaCentrale;
+    protected MenuBarMondo menu;
+    private final DialogoIstruzioni inst;
 
-	// current address
-	private double currentLat;
-	private double currentLog;
-	private double destinationLat;
-	private double destinationLog;
+    private final MappaLaterale mappaLaterale;
+    private final WeatherCont weather;
+    private final MappaCentrale mappaCentrale;
 
-	// plane controls
-	private int direction;
-	private int speed;
+    private double latCorrente;
+    private double logCorrente;
+    private double latDestinazione;
+    private double logDestinazione;
 
-	// game state controls
-	private boolean sound;
-	private boolean paused;
-	private boolean landing;
-	private boolean autoLand;
+    // plane controls
+    private int direzione;
+    private int velocita;
 
-	// sound
-	private Audio cockpit;
-	private Audio planeNoise;
-	private Audio landingNoise;
-	private Audio landed;
+    private boolean suono;
+    private boolean pausa;
+    private boolean atterraggio;
+    private boolean autoAtterraggio;
 
-	// latch used to play audio clips in order
-	private CountDownLatch latch;
+    private Audio cockpit;
+    private Audio planeNoise;
+    private Audio landingNoise;
+    private Audio landed;
+    private CountDownLatch latch;
 
-	public Mondo() throws IOException, InterruptedException {
-		inst = new DialogoIstruzioni();
+    public Mondo() throws IOException, InterruptedException {
+        inst = new DialogoIstruzioni();
 
-		setLayout(new BorderLayout());
-		setSize(1000, 600);
-		setResizable(false);
-		setLocationRelativeTo(null);
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		setTitle("Progetto TPS Zanatta-Masaneo");
+        setLayout(new BorderLayout());
+        setSize(1000, 600);
+        setResizable(false);
+        setLocationRelativeTo(null);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setTitle("Progetto TPS Zanatta-Masaneo");
 
-		currentLat = 40.633785;
-		currentLog = -73.779277;
+        latCorrente = 40.633785;
+        logCorrente = -73.779277;
 
-		// create window icon (only visible on mac when minimize window)
-		setIconImage(ImageIO.read(Objects.requireNonNull(getClass().getResource("immagini/airplane.jpg"))));
-		setFocusable(true);
+        // create window icon (only visible on mac when minimize window)
+        setIconImage(ImageIO.read(Objects.requireNonNull(getClass().getResource("immagini/airplane.jpg"))));
+        setFocusable(true);
 
-		menu = new MenuBarMondo(this);
-		// don't want setJMenuBar(menu); because by default it adds it to north
-		add(menu, BorderLayout.SOUTH);
+        menu = new MenuBarMondo(this);
+        // don't want setJMenuBar(menu); because by default it adds it to north
+        add(menu, BorderLayout.SOUTH);
 
-		// default speed and direction
-		direction = LEFT;
-		speed = 0;
+        // default velocita and direzione
+        direzione = LEFT;
+        velocita = 0;
 
-		// game state controls
-		autoLand = false;
-		sound = true;
-		landing = false;
-		paused = true;
+        // game state controls
+        autoAtterraggio = false;
+        suono = true;
+        atterraggio = false;
+        pausa = true;
 
-		// create the three panels and set up their location on the screen
-		mappaCentrale = new MappaCentrale(currentLat, currentLog);
-		add(mappaCentrale, BorderLayout.CENTER);
-		mappaLaterale = new MappaLaterale(currentLat, currentLog, direction);
-		add(mappaLaterale, BorderLayout.WEST);
-		weather = new WeatherCont(currentLat, currentLog);
-		add(weather, BorderLayout.EAST);
-		setUpKeyBindings();
+        // create the three panels and set up their location on the screen
+        mappaCentrale = new MappaCentrale(latCorrente, logCorrente);
+        add(mappaCentrale, BorderLayout.CENTER);
+        mappaLaterale = new MappaLaterale(latCorrente, logCorrente, direzione);
+        add(mappaLaterale, BorderLayout.WEST);
+        weather = new WeatherCont(latCorrente, logCorrente);
+        add(weather, BorderLayout.EAST);
+        setupTastiera();
 
-		setVisible(true);
+        setVisible(true);
 
-		latch = new CountDownLatch(1);
-		// start sound
+        latch = new CountDownLatch(1);
 
-		cockpit = new Audio(latch, 10000, "sound/seat.wav", false);
-		cockpit.start();
-		latch.await();
-		if (sound) {
-			planeNoise = new Audio(latch, 0, "sound/airTraffic.wav", true);
-			planeNoise.start();
-		}
-	}
+        cockpit = new Audio(latch, 10000, "suono/seat.wav", false);
+        cockpit.start();
+        latch.await();
+        if (suono) {
+            planeNoise = new Audio(latch, 0, "suono/airTraffic.wav", true);
+            planeNoise.start();
+        }
+    }
 
-	public void updateLatLog(double curLat, double curLog, double endLat, double endLog) throws IOException {
-		currentLat = curLat;
-		currentLog = curLog;
-		destinationLat = endLat;
-		destinationLog = endLog;
-		weather.updateAll(currentLat, currentLog, endLat, endLog);
-		mappaLaterale.newTrip(currentLat, currentLog, endLat, endLog);
-		mappaCentrale.updateMap(speed, currentLat, currentLog, false);
-	}
+    public void updateLatLog(double latCorrente, double logCorrente, double latDestinazione, double logDestinazione) throws IOException {
+        this.latCorrente = latCorrente;
+        this.logCorrente = logCorrente;
+        this.latDestinazione = latDestinazione;
+        this.logDestinazione = logDestinazione;
+        weather.updateAll(this.latCorrente, this.logCorrente, latDestinazione, logDestinazione);
+        mappaLaterale.nuovoVolo(this.latCorrente, this.logCorrente, latDestinazione, logDestinazione);
+        mappaCentrale.updateMap(velocita, this.latCorrente, this.logCorrente, false);
+    }
 
-	public void setUpKeyBindings() {
-		InputMap inputMap = getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
-		ActionMap actionMap = getRootPane().getActionMap();
-		// inputMap.put(KeyStroke.getKeyStroke("P"), "togglePause");
-		inputMap.put(KeyStroke.getKeyStroke("8"), "directionUp");
-		inputMap.put(KeyStroke.getKeyStroke("2"), "directionDown");
-		inputMap.put(KeyStroke.getKeyStroke("4"), "directionLeft");
-		inputMap.put(KeyStroke.getKeyStroke("6"), "directionRight");
-		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD8, 0), "directionUp");
-		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD2, 0), "directionDown");
-		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD4, 0), "directionLeft");
-		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD6, 0), "directionRight");
-		inputMap.put(KeyStroke.getKeyStroke("UP"), "directionUp");
-		inputMap.put(KeyStroke.getKeyStroke("DOWN"), "directionDown");
-		inputMap.put(KeyStroke.getKeyStroke("RIGHT"), "directionRight");
-		inputMap.put(KeyStroke.getKeyStroke("LEFT"), "directionLeft");
-		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_PLUS, 0), "speedPlus");
-		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_EQUALS, 0), "speedPlus");
-		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, 0), "speedMinus");
-		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ADD, 0), "speedPlus");
-		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_SUBTRACT, 0), "speedMinus");
+    public void setupTastiera() {
+        InputMap inputMap = getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+        ActionMap actionMap = getRootPane().getActionMap();
+        // inputMap.put(KeyStroke.getKeyStroke("P"), "togglePause");
+        inputMap.put(KeyStroke.getKeyStroke("8"), "directionUp");
+        inputMap.put(KeyStroke.getKeyStroke("2"), "directionDown");
+        inputMap.put(KeyStroke.getKeyStroke("4"), "directionLeft");
+        inputMap.put(KeyStroke.getKeyStroke("6"), "directionRight");
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD8, 0), "directionUp");
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD2, 0), "directionDown");
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD4, 0), "directionLeft");
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD6, 0), "directionRight");
+        inputMap.put(KeyStroke.getKeyStroke("UP"), "directionUp");
+        inputMap.put(KeyStroke.getKeyStroke("DOWN"), "directionDown");
+        inputMap.put(KeyStroke.getKeyStroke("RIGHT"), "directionRight");
+        inputMap.put(KeyStroke.getKeyStroke("LEFT"), "directionLeft");
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_PLUS, 0), "speedPlus");
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_EQUALS, 0), "speedPlus");
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, 0), "speedMinus");
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ADD, 0), "speedPlus");
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_SUBTRACT, 0), "speedMinus");
 
-		actionMap.put("speedPlus", new Speed(INCREASE));
-		actionMap.put("speedMinus", new Speed(DECREASE));
-		actionMap.put("directionUp", new Direction(UP));
-		actionMap.put("directionDown", new Direction(DOWN));
-		actionMap.put("directionRight", new Direction(RIGHT));
-		actionMap.put("directionLeft", new Direction(LEFT));
-		// actionMap.put("togglePause", new PauseAction());
-	}
+        actionMap.put("speedPlus", new AzionaVelocita(INCREASE));
+        actionMap.put("speedMinus", new AzionaVelocita(DECREASE));
+        actionMap.put("directionUp", new AzionaDirezione(UP));
+        actionMap.put("directionDown", new AzionaDirezione(DOWN));
+        actionMap.put("directionRight", new AzionaDirezione(RIGHT));
+        actionMap.put("directionLeft", new AzionaDirezione(LEFT));
+        // actionMap.put("togglePause", new PauseAction());
+    }
 
-	// setters & getters
-	public void setAutoLand() {
-		autoLand = true;
-	}
+    // setters & getters
+    public void setAutoAtterraggio() {
+        autoAtterraggio = true;
+    }
 
-	public void setDirection(int direction) {
-		this.direction = direction;
-		mappaLaterale.setDirection(direction);
-	}
+    public void setDirezione(int direzione) {
+        this.direzione = direzione;
+        mappaLaterale.setDirezione(direzione);
+    }
 
-	public void adjustSpeed(int adjust) {
-		speed += adjust;
-		if (speed < 0) {
-			speed = 0;
-		}
-		// 1 degree lat = 69 miles
-		// 69 miles per hour = 1 degree lat per hour
-		else if (speed > 69) {
-			speed = 69;
-		}
+    public void setVelocita(int adjust) {
+        velocita += adjust;
+        if (velocita < 0) {
+            velocita = 0;
+        } else if (velocita > 69) {        // velocita massima = 690
+            velocita = 69;
+        }
 
-	}
+    }
 
-	public void update() throws IOException, InterruptedException {
-		if (!paused & !landing) {
-			// determine the change in speed
-			// 1 degree lat = 69 miles
-			// 69 miles per hour = 1 degree lat per hour
-			double difference = speed / 69.0;
-			switch (direction) {
-				case UP -> currentLat += difference;
-				case DOWN -> currentLat -= difference;
-				case LEFT -> currentLog -= difference;
-				case RIGHT -> currentLog += difference;
-			}
+    public void update() throws IOException, InterruptedException {
+        if (!pausa & !atterraggio) {
+            double difference = velocita / 69.0;
+            switch (direzione) {
+                case UP -> latCorrente += difference;
+                case DOWN -> latCorrente -= difference;
+                case LEFT -> logCorrente -= difference;
+                case RIGHT -> logCorrente += difference;
+            }
 
-			// update all panels
-			mappaCentrale.updateMap(speed, currentLat, currentLog, false);
-			weather.updateCurrent(currentLat, currentLog);
-			mappaLaterale.updateMap(speed, currentLat, currentLog);
+            // update all panels
+            mappaCentrale.updateMap(velocita, latCorrente, logCorrente, false);
+            weather.updateCurrent(latCorrente, logCorrente);
+            mappaLaterale.updateMap(velocita, latCorrente, logCorrente);
 
-			// determine if reached destination
-			if (autoLand && speed > 0) {
-				reachDestination();
-			}
+            // determine if reached destination
+            if (autoAtterraggio && velocita > 0) {
+                raggiuntaDestinazione();
+            }
 
-		}
-		repaint();
-	}
+        }
+        repaint();
+    }
 
-	public void reachDestination() throws IOException, InterruptedException {
-		if (Math.abs(currentLat - destinationLat) <= .15 && Math.abs(currentLog - destinationLog) <= .15) {
-			mappaCentrale.updateMap(0, destinationLat, destinationLog, true);
-			weather.updateCurrent(destinationLat, destinationLog);
-			mappaLaterale.landPlane(destinationLat, destinationLog);
-			repaint();
-			if (planeNoise != null) {
-				planeNoise.stopMusic();
-			}
-			if (sound) {
-				latch = new CountDownLatch(1);
-				Audio ding = new Audio(latch, 2000, "sound/ding.wav", false);
-				ding.start();
-				latch.await();
-				latch = new CountDownLatch(1);
-				landingNoise = new Audio(latch, 7000, "sound/landing.wav", false);
-				landingNoise.start();
-			}
-			landPlane();
-		}
-	}
+    public void raggiuntaDestinazione() throws IOException, InterruptedException {
+        if (Math.abs(latCorrente - latDestinazione) <= .15 && Math.abs(logCorrente - logDestinazione) <= .15) {
+            mappaCentrale.updateMap(0, latDestinazione, logDestinazione, true);
+            weather.updateCurrent(latDestinazione, logDestinazione);
+            mappaLaterale.atterraAereo(latDestinazione, logDestinazione);
+            repaint();
+            if (planeNoise != null) {
+                planeNoise.stopMusic();
+            }
+            if (suono) {
+                latch = new CountDownLatch(1);
+                Audio ding = new Audio(latch, 2000, "suono/ding.wav", false);
+                ding.start();
+                latch.await();
+                latch = new CountDownLatch(1);
+                landingNoise = new Audio(latch, 7000, "suono/atterraggio.wav", false);
+                landingNoise.start();
+            }
+            landPlane();
+        }
+    }
 
-	public void landPlane() throws InterruptedException {
-		autoLand = false;
+    public void landPlane() throws InterruptedException {
+        autoAtterraggio = false;
 
-		// when land, plane stops and so the speed becomes 0
-		speed = 0;
+        velocita = 0;
 
-		// show that in process of landing the plane
-		landing = true;
+        atterraggio = true;
 
-		// play the sequence of landing sound tracks
-		if (sound) {
-			latch.await();
-			latch = new CountDownLatch(1);
-			if (sound) {
-				landed = new Audio(latch, 7000, "sound/landed.wav", false);
-				landed.start();
-				latch.await();
-			}
-			if (sound) {
-				latch = new CountDownLatch(1);
-				cockpit = new Audio(latch, 10000, "sound/seat.wav", false);
-				cockpit.start();
-				latch.await();
-			}
-			if (sound) {
-				planeNoise = new Audio(latch, 0, "sound/airTraffic.wav", true);
-				planeNoise.start();
-			}
-		}
+        if (suono) {
+            latch.await();
+            latch = new CountDownLatch(1);
+            if (suono) {
+                landed = new Audio(latch, 7000, "suono/landed.wav", false);
+                landed.start();
+                latch.await();
+            }
+            if (suono) {
+                latch = new CountDownLatch(1);
+                cockpit = new Audio(latch, 10000, "suono/seat.wav", false);
+                cockpit.start();
+                latch.await();
+            }
+            if (suono) {
+                planeNoise = new Audio(latch, 0, "suono/airTraffic.wav", true);
+                planeNoise.start();
+            }
+        }
+        atterraggio = false;    // finito suono atterraggio, si ridecolla accelerando
+    }
 
-		// when landing sound tracks finish, the land is complete
-		// now user can fly the plane again by increasing the speed
-		landing = false;
-	}
+    public void pulsantePlay() throws InterruptedException {
+        pausa = !pausa;
+        menu.togglePauseText();
+    }
 
-	public void togglePlay() throws InterruptedException {
-		paused = !paused;
-		menu.togglePauseText();
-	}
+    public void pulsanteMuto() {
+        if (suono) {
+            cockpit.stopMusic();
+            if (planeNoise != null) {
+                planeNoise.stopMusic();
+            }
+            if (landed != null) {
+                landed.stopMusic();
+            }
+            if (landingNoise != null) {
+                landingNoise.stopMusic();
+            }
+            this.suono = false;
+        } else {
+            suono = true;
+            planeNoise = new Audio(latch, 0, "suono/airTraffic.wav", true);
+            planeNoise.start();
+        }
+    }
 
-	public void toggleMute() {
-		if (sound) {
-			cockpit.stopMusic();
-			if (planeNoise != null) {
-				planeNoise.stopMusic();
-			}
-			if (landed != null) {
-				landed.stopMusic();
-			}
-			if (landingNoise != null) {
-				landingNoise.stopMusic();
-			}
-			this.sound = false;
-		}
-		else {
-			sound = true;
-			planeNoise = new Audio(latch, 0, "sound/airTraffic.wav", true);
-			planeNoise.start();
-		}
-	}
+    @SuppressWarnings("deprecation")
+    public void apriIstruzioni() {
+        inst.show();
+    }
 
-	@SuppressWarnings("deprecation")
-	public void openInstructions() {
-		inst.show();
-	}
 
-	// pause action
-	@SuppressWarnings("unused")
-	private class PauseAction extends AbstractAction {
-		@Serial
-		private static final long serialVersionUID = 1L;
+    private class AzionaDirezione extends AbstractAction {
+        @Serial
+        private static final long serialVersionUID = 1L;
+        private final int direzione;
 
-		@Override
-		public void actionPerformed(ActionEvent arg0) {
-			try {
-				togglePlay();
-			}
-			catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
+        public AzionaDirezione(int direzione) {
+            this.direzione = direzione;
+        }
 
-	}
+        @Override
+        public void actionPerformed(ActionEvent arg0) {
+            setDirezione(direzione);
+        }
+    }
 
-	// direction action
-	private class Direction extends AbstractAction {
-		@Serial
-		private static final long serialVersionUID = 1L;
-		private final int direction;
+    private class AzionaVelocita extends AbstractAction {
+        @Serial
+        private static final long serialVersionUID = 1L;
+        private final int velocita;
 
-		public Direction(int direction) {
-			this.direction = direction;
-		}
+        public AzionaVelocita(int velocita) {
+            this.velocita = velocita;
+        }
 
-		@Override
-		public void actionPerformed(ActionEvent arg0) {
-			setDirection(direction);
-		}
-	}
-
-	// speed Action
-	private class Speed extends AbstractAction {
-		@Serial
-		private static final long serialVersionUID = 1L;
-		private final int speed;
-
-		public Speed(int speed) {
-			this.speed = speed;
-		}
-
-		@Override
-		public void actionPerformed(ActionEvent arg0) {
-			adjustSpeed(speed);
-		}
-	}
+        @Override
+        public void actionPerformed(ActionEvent arg0) {
+            setVelocita(velocita);
+        }
+    }
 }

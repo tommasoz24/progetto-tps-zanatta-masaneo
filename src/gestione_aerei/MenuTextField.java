@@ -14,17 +14,16 @@ import javax.swing.JTextField;
 public class MenuTextField extends JTextField {
 	@Serial
 	private static final long serialVersionUID = 1L;
-	private String name;
+	private final String nome;
 
-	public MenuTextField(String name, final Mondo mondo) {
+	public MenuTextField(String nome, final Mondo mondo) {
 		setColumns(20);
 		setFont(new Font("Arial", Font.PLAIN, 18));
 		setSelectedTextColor(Color.BLUE);
-		setToolTipText("Enter the address of the " + name.toLowerCase() + " location");
-		this.name = name;
-		setText(name);
+		setToolTipText("Inserisci l'indirizzo di " + nome.toLowerCase());
+		this.nome = nome;
+		setText(nome);
 
-		// move focus to textFields
 		addFocusListener(new FocusAdapter() {
 			@Override
 			public void focusGained(FocusEvent e) {
@@ -33,14 +32,12 @@ public class MenuTextField extends JTextField {
 			}
 		});
 
-		// allow user to submit input with enter key in addition to pressing the go button
 		addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
 					try {
-						mondo.menu.gobutton();
-						// set focus back to world
+						mondo.menu.bottoneAvvia();
 						mondo.requestFocus();
 					}
 					catch (IOException e1) {
@@ -53,6 +50,6 @@ public class MenuTextField extends JTextField {
 	}
 
 	public void reset() {
-		setText(name);
+		setText(nome);
 	}
 }

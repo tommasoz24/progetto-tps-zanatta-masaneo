@@ -12,8 +12,8 @@ public class MenuView extends JMenu {
 	private static final long serialVersionUID = 1L;
 
 	public MenuView(JPanel parentPanel) {
-		setText("View");
-		setToolTipText("MapPanel View");
+		setText("Vista");
+		setToolTipText("Vista PannelloMappa");
 
 		Font font = new Font("Arial", Font.PLAIN, 12);
 		setFont(font.deriveFont(14f));
@@ -22,7 +22,6 @@ public class MenuView extends JMenu {
 		int[] mnemonics = { KeyEvent.VK_S, KeyEvent.VK_R, KeyEvent.VK_H, KeyEvent.VK_T };
 		JMenuItem[] views = new JMenuItem[viewNames.length];
 
-		// FIXME see if can find a way to not always cast
 		ActionListener mapView = e -> {
 			JMenuItem item = (JMenuItem) e.getSource();
 			String view = item.getText();

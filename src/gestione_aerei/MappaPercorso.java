@@ -23,19 +23,19 @@ public class MappaPercorso extends PannelloMappa {
 		img = ImageIO.read(Objects.requireNonNull(getClass().getResource("immagini/pathMap.png")));
 	}
 
-	public void loadImg() {
+	public void caricaImg() {
 		new ImgDownloadThread(url, this).start();
 	}
 
-	public void updateMap(double startlat, double startlong, double endlat, double endlong)
+	public void aggiornaMappa(double latIniziale, double logIniziale, double latFinale, double logFinale)
 			throws MalformedURLException {
-		String start = startlat + "," + startlong;
-		String end = endlat + "," + endlong;
+		String start = latIniziale + "," + logIniziale;
+		String end = latFinale + "," + logFinale;
 		url = new URL("https://maps.googleapis.com/maps/api/staticmap?size=" + width + "x" + height
 				+ "&path=color:0x0000ff|weight:5|" + start + "|" + end + "&maptype=" + view
 				+ "&markers=size:mid%7Ccolor:red%7C" + start + "%7C" + end
 				+ "&key=AIzaSyAirHEsA08agmW9uizDvXagTjWS3mRctPE");
-		loadImg();
+		caricaImg();
 		repaint();
 	}
 
