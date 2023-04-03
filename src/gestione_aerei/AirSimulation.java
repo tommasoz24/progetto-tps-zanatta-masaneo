@@ -17,7 +17,7 @@ public class AirSimulation {
 		}
 
 		try {
-			new GameLoopThread(new World()).start();
+			new GameLoopThread(new Mondo()).start();
 		}
 		catch (IOException | InterruptedException e) {
 			e.printStackTrace();

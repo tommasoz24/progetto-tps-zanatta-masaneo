@@ -16,7 +16,7 @@ public class MenuTextField extends JTextField {
 	private static final long serialVersionUID = 1L;
 	private String name;
 
-	public MenuTextField(String name, final World world) {
+	public MenuTextField(String name, final Mondo mondo) {
 		setColumns(20);
 		setFont(new Font("Arial", Font.PLAIN, 18));
 		setSelectedTextColor(Color.BLUE);
@@ -39,9 +39,9 @@ public class MenuTextField extends JTextField {
 			public void keyPressed(KeyEvent e) {
 				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
 					try {
-						world.menu.gobutton();
+						mondo.menu.gobutton();
 						// set focus back to world
-						world.requestFocus();
+						mondo.requestFocus();
 					}
 					catch (IOException e1) {
 						e1.printStackTrace();

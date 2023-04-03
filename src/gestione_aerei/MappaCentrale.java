@@ -20,7 +20,7 @@ import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JMenuBar;
 
-public class CenterMap extends MapPanel {
+public class MappaCentrale extends PannelloMappa {
 	@Serial
 	private static final long serialVersionUID = 1L;
 	private double currentLat;
@@ -49,7 +49,7 @@ public class CenterMap extends MapPanel {
 	private Font alienFont;
 	private Font landFont;
 
-	public CenterMap(double currentlat, double currentlong) throws IOException {
+	public MappaCentrale(double currentlat, double currentlong) throws IOException {
 		width = 600;
 		height = 600;
 		setPreferredSize(new Dimension(width, height));

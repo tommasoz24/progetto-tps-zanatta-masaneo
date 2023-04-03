@@ -16,8 +16,6 @@ public class ImgDownloadThread extends Thread {
 	@Override
 	public void run() {
 		ImageIcon icon = new ImageIcon(url);
-		// cast the parentCompent so you can call the proper setImage/Icon
-		// method
 		component.setImage(icon);
 	}
 }

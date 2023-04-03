@@ -9,13 +9,13 @@ import java.util.Objects;
 
 import javax.imageio.ImageIO;
 
-public class Plane {
+public class Aereo {
 	private int x;
 	private int y;
 	private int degrees;
 	private final BufferedImage planeImg;
 
-	public Plane(int x, int y) throws IOException {
+	public Aereo(int x, int y) throws IOException {
 		this.x = x;
 		this.y = y;
 		planeImg = ImageIO.read(Objects.requireNonNull(getClass().getResource("immagini/airplane.jpg")));

@@ -27,10 +27,10 @@ public class MenuView extends JMenu {
 			JMenuItem item = (JMenuItem) e.getSource();
 			String view = item.getText();
 			try {
-				if (parentPanel instanceof NavigationMap) {
-					((NavigationMap) parentPanel).updateView(view);
-				} else if (parentPanel instanceof CenterMap) {
-					((CenterMap) parentPanel).updateView(view);
+				if (parentPanel instanceof MappaNavigazione) {
+					((MappaNavigazione) parentPanel).updateView(view);
+				} else if (parentPanel instanceof MappaCentrale) {
+					((MappaCentrale) parentPanel).updateView(view);
 				}
 			} catch (MalformedURLException e1) {
 				e1.printStackTrace();

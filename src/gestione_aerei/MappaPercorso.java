@@ -10,12 +10,12 @@ import java.util.Objects;
 
 import javax.imageio.ImageIO;
 
-public class PathMap extends MapPanel {
+public class MappaPercorso extends PannelloMappa {
 	@Serial
 	private static final long serialVersionUID = 1L;
 	private URL url;
 
-	public PathMap() throws IOException {
+	public MappaPercorso() throws IOException {
 		width = 300;
 		height = 290;
 		view = "roadmap";

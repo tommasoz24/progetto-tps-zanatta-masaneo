@@ -11,18 +11,18 @@ import org.apache.commons.io.IOUtils;
 
 import com.google.gson.Gson;
 
-import gestione_aerei.World;
+import gestione_aerei.Mondo;
 
 public class AddressThread extends Thread {
-	private World world;
+	private Mondo mondo;
 	private String address;
 	private String address2;
 	private Gson gson;
 	private String lat;
 	private String log;
 
-	public AddressThread(World world, String address, String address2) throws UnsupportedEncodingException {
-		this.world = world;
+	public AddressThread(Mondo mondo, String address, String address2) throws UnsupportedEncodingException {
+		this.mondo = mondo;
 		this.address = URLEncoder.encode(address, "UTF-8");
 		this.address2 = URLEncoder.encode(address2, "UTF-8");
 		gson = new Gson();
@@ -36,7 +36,7 @@ public class AddressThread extends Thread {
 			getLatLog(address2);
 			double lat2 = Double.parseDouble(lat);
 			double log2 = Double.parseDouble(log);
-			world.updateLatLog(lat1, log1, lat2, log2);
+			mondo.updateLatLog(lat1, log1, lat2, log2);
 		}
 		catch (IOException e) {
 			e.printStackTrace();

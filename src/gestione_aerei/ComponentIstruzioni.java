@@ -9,12 +9,12 @@ import java.io.Serial;
 import javax.imageio.ImageIO;
 import javax.swing.JComponent;
 
-public class InstructionsComponent extends JComponent {
+public class ComponentIstruzioni extends JComponent {
 	@Serial
 	private static final long serialVersionUID = 1L;
 	private BufferedImage img;
 
-	public InstructionsComponent() throws IOException {
+	public ComponentIstruzioni() throws IOException {
 		img = ImageIO.read(getClass().getResource("immagini/inst4.jpg"));
 		repaint();
 	}

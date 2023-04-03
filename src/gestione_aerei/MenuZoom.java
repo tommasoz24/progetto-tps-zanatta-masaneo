@@ -1,6 +1,5 @@
 package gestione_aerei;
 
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.Serial;
 import java.net.MalformedURLException;
@@ -17,9 +16,9 @@ public class MenuZoom extends JMenuItem {
 	
 	private JButton zoomout;
 	private JButton zoomin;
-	private MapPanel parentPanel;
+	private PannelloMappa parentPanel;
 
-	public MenuZoom(MapPanel parentPanel, int initialZoom) {
+	public MenuZoom(PannelloMappa parentPanel, int initialZoom) {
 		setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
 		this.parentPanel = parentPanel;
 
@@ -81,11 +80,11 @@ public class MenuZoom extends JMenuItem {
 
 	private void load() throws MalformedURLException {
 		// cast parentPanel so can call the correct loadImg()
-		if (parentPanel instanceof NavigationMap) {
-			((NavigationMap) parentPanel).loadImg();
+		if (parentPanel instanceof MappaNavigazione) {
+			((MappaNavigazione) parentPanel).loadImg();
 		}
-		else if (parentPanel instanceof CenterMap) {
-			((CenterMap) parentPanel).loadImg();
+		else if (parentPanel instanceof MappaCentrale) {
+			((MappaCentrale) parentPanel).loadImg();
 		}
 	}
 }

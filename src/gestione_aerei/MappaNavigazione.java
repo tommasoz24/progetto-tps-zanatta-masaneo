@@ -13,17 +13,17 @@ import javax.imageio.ImageIO;
 import javax.swing.Box;
 import javax.swing.JMenuBar;
 
-public class NavigationMap extends MapPanel {
+public class MappaNavigazione extends PannelloMappa {
 	@Serial
 	private static final long serialVersionUID = 1L;
 	private double currentlat;
 	private double currentlong;
 	private double diffBuffer;
-	private Plane plane;
+	private Aereo aereo;
 
 	private MenuZoom zoomPanel;
 
-	public NavigationMap(double startlat, double startlong) throws IOException {
+	public MappaNavigazione(double startlat, double startlong) throws IOException {
 		width = 300;
 		height = 272;
 		setPreferredSize(new Dimension(width, height));
@@ -40,7 +40,7 @@ public class NavigationMap extends MapPanel {
 		menu.add(zoomPanel);
 		add(menu, BorderLayout.NORTH);
 
-		plane = new Plane(width / 2, height / 2 - 10);
+		aereo = new Aereo(width / 2, height / 2 - 10);
 
 		diffBuffer = 0;
 
@@ -72,39 +72,39 @@ public class NavigationMap extends MapPanel {
 
 		// set the direction according the the arrow key or number the user pressed
 		switch (direction) {
-			case 2 -> plane.changeY(difference);
-			case 4 -> plane.changeX(-difference);
-			case 6 -> plane.changeX(difference);
-			case 8 -> plane.changeY(-difference);
+			case 2 -> aereo.changeY(difference);
+			case 4 -> aereo.changeX(-difference);
+			case 6 -> aereo.changeX(difference);
+			case 8 -> aereo.changeY(-difference);
 			default -> throw new IllegalStateException("Unexpected value: " + direction);
 		}
 
-		int x = plane.getX();
-		int y = plane.getY();
+		int x = aereo.getX();
+		int y = aereo.getY();
 
 		if (x <= 0 || x >= width || y <= 0 || y >= height) {
 			this.currentlat = currentlat;
 			this.currentlong = currentlong;
 
-			plane.reset();
+			aereo.reset();
 			loadImg();
 		}
 	}
 
 	public void setDegree(int direction) {
-		plane.setDegree(direction);
+		aereo.setDegree(direction);
 	}
 
 	public void newMap(double newLat, double newLog) throws MalformedURLException {
 		currentlat = newLat;
 		currentlong = newLog;
-		plane.reset();
+		aereo.reset();
 		loadImg();
 	}
 
 	public void paintComponent(Graphics g) {
 		g.drawImage(img, 0, 0, width, height, null);
-		plane.paintComponent(g);
+		aereo.paintComponent(g);
 	}
 
 	public void loadImg() throws MalformedURLException {

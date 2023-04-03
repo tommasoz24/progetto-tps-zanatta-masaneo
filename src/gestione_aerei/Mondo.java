@@ -18,7 +18,7 @@ import javax.swing.KeyStroke;
 
 import weather.WeatherCont;
 
-public class World extends JFrame {
+public class Mondo extends JFrame {
 	@Serial
 	private static final long serialVersionUID = 1L;
 
@@ -29,13 +29,13 @@ public class World extends JFrame {
 	private static final int INCREASE = 3;
 	private static final int DECREASE = -3;
 	
-	protected WorldMenuBar menu;
-	private final InstructionDialog inst;
+	protected MenuBarMondo menu;
+	private final DialogoIstruzioni inst;
 
 	// three panels
-	private final SideMap sideMap;
+	private final MappaLaterale mappaLaterale;
 	private final WeatherCont weather;
-	private final CenterMap centerMap;
+	private final MappaCentrale mappaCentrale;
 
 	// current address
 	private double currentLat;
@@ -54,16 +54,16 @@ public class World extends JFrame {
 	private boolean autoLand;
 
 	// sound
-	private Sound cockpit;
-	private Sound planeNoise;
-	private Sound landingNoise;
-	private Sound landed;
+	private Audio cockpit;
+	private Audio planeNoise;
+	private Audio landingNoise;
+	private Audio landed;
 
 	// latch used to play audio clips in order
 	private CountDownLatch latch;
 
-	public World() throws IOException, InterruptedException {
-		inst = new InstructionDialog();
+	public Mondo() throws IOException, InterruptedException {
+		inst = new DialogoIstruzioni();
 
 		setLayout(new BorderLayout());
 		setSize(1000, 600);
@@ -79,7 +79,7 @@ public class World extends JFrame {
 		setIconImage(ImageIO.read(Objects.requireNonNull(getClass().getResource("immagini/airplane.jpg"))));
 		setFocusable(true);
 
-		menu = new WorldMenuBar(this);
+		menu = new MenuBarMondo(this);
 		// don't want setJMenuBar(menu); because by default it adds it to north
 		add(menu, BorderLayout.SOUTH);
 
@@ -94,10 +94,10 @@ public class World extends JFrame {
 		paused = true;
 
 		// create the three panels and set up their location on the screen
-		centerMap = new CenterMap(currentLat, currentLog);
-		add(centerMap, BorderLayout.CENTER);
-		sideMap = new SideMap(currentLat, currentLog, direction);
-		add(sideMap, BorderLayout.WEST);
+		mappaCentrale = new MappaCentrale(currentLat, currentLog);
+		add(mappaCentrale, BorderLayout.CENTER);
+		mappaLaterale = new MappaLaterale(currentLat, currentLog, direction);
+		add(mappaLaterale, BorderLayout.WEST);
 		weather = new WeatherCont(currentLat, currentLog);
 		add(weather, BorderLayout.EAST);
 		setUpKeyBindings();
@@ -107,11 +107,11 @@ public class World extends JFrame {
 		latch = new CountDownLatch(1);
 		// start sound
 
-		cockpit = new Sound(latch, 10000, "sound/seat.wav", false);
+		cockpit = new Audio(latch, 10000, "sound/seat.wav", false);
 		cockpit.start();
 		latch.await();
 		if (sound) {
-			planeNoise = new Sound(latch, 0, "sound/airTraffic.wav", true);
+			planeNoise = new Audio(latch, 0, "sound/airTraffic.wav", true);
 			planeNoise.start();
 		}
 	}
@@ -122,8 +122,8 @@ public class World extends JFrame {
 		destinationLat = endLat;
 		destinationLog = endLog;
 		weather.updateAll(currentLat, currentLog, endLat, endLog);
-		sideMap.newTrip(currentLat, currentLog, endLat, endLog);
-		centerMap.updateMap(speed, 0, 0, currentLat, currentLog, false);
+		mappaLaterale.newTrip(currentLat, currentLog, endLat, endLog);
+		mappaCentrale.updateMap(speed, 0, 0, currentLat, currentLog, false);
 	}
 
 	public void setUpKeyBindings() {
@@ -164,7 +164,7 @@ public class World extends JFrame {
 
 	public void setDirection(int direction) {
 		this.direction = direction;
-		sideMap.setDirection(direction);
+		mappaLaterale.setDirection(direction);
 	}
 
 	public void adjustSpeed(int adjust) {
@@ -194,9 +194,9 @@ public class World extends JFrame {
 			}
 
 			// update all panels
-			centerMap.updateMap(speed, direction, difference, currentLat, currentLog, false);
+			mappaCentrale.updateMap(speed, direction, difference, currentLat, currentLog, false);
 			weather.updateCurrent(currentLat, currentLog);
-			sideMap.updateMap(speed, currentLat, currentLog);
+			mappaLaterale.updateMap(speed, currentLat, currentLog);
 
 			// determine if reached destination
 			if (autoLand && speed > 0) {
@@ -209,20 +209,20 @@ public class World extends JFrame {
 
 	public void reachDestination() throws IOException, InterruptedException {
 		if (Math.abs(currentLat - destinationLat) <= .15 && Math.abs(currentLog - destinationLog) <= .15) {
-			centerMap.updateMap(0, direction, 0, destinationLat, destinationLog, true);
+			mappaCentrale.updateMap(0, direction, 0, destinationLat, destinationLog, true);
 			weather.updateCurrent(destinationLat, destinationLog);
-			sideMap.landPlane(destinationLat, destinationLog);
+			mappaLaterale.landPlane(destinationLat, destinationLog);
 			repaint();
 			if (planeNoise != null) {
 				planeNoise.stopMusic();
 			}
 			if (sound) {
 				latch = new CountDownLatch(1);
-				Sound ding = new Sound(latch, 2000, "sound/ding.wav", false);
+				Audio ding = new Audio(latch, 2000, "sound/ding.wav", false);
 				ding.start();
 				latch.await();
 				latch = new CountDownLatch(1);
-				landingNoise = new Sound(latch, 7000, "sound/landing.wav", false);
+				landingNoise = new Audio(latch, 7000, "sound/landing.wav", false);
 				landingNoise.start();
 			}
 			landPlane();
@@ -243,18 +243,18 @@ public class World extends JFrame {
 			latch.await();
 			latch = new CountDownLatch(1);
 			if (sound) {
-				landed = new Sound(latch, 7000, "sound/landed.wav", false);
+				landed = new Audio(latch, 7000, "sound/landed.wav", false);
 				landed.start();
 				latch.await();
 			}
 			if (sound) {
 				latch = new CountDownLatch(1);
-				cockpit = new Sound(latch, 10000, "sound/seat.wav", false);
+				cockpit = new Audio(latch, 10000, "sound/seat.wav", false);
 				cockpit.start();
 				latch.await();
 			}
 			if (sound) {
-				planeNoise = new Sound(latch, 0, "sound/airTraffic.wav", true);
+				planeNoise = new Audio(latch, 0, "sound/airTraffic.wav", true);
 				planeNoise.start();
 			}
 		}
@@ -285,7 +285,7 @@ public class World extends JFrame {
 		}
 		else {
 			sound = true;
-			planeNoise = new Sound(latch, 0, "sound/airTraffic.wav", true);
+			planeNoise = new Audio(latch, 0, "sound/airTraffic.wav", true);
 			planeNoise.start();
 		}
 	}

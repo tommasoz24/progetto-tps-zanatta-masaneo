@@ -8,20 +8,20 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.Serial;
 
-public class WorldMenuBar extends JMenuBar {
+public class MenuBarMondo extends JMenuBar {
 	@Serial
 	private static final long serialVersionUID = 1L;
 	private final JButton play;
 	private final MenuTextField location;
 	private final MenuTextField destination;
-	private final World world;
+	private final Mondo mondo;
 
-	public WorldMenuBar(World world) {
-		this.world = world;
+	public MenuBarMondo(Mondo mondo) {
+		this.mondo = mondo;
 		setLayout(new FlowLayout(FlowLayout.CENTER, 15, 3));
 
 		JCheckBox mute = new JCheckBox("Muto");
-		ActionListener muteButton = event -> world.toggleMute();
+		ActionListener muteButton = event -> mondo.toggleMute();
 		mute.addActionListener(muteButton);
 		add(mute);
 
@@ -29,7 +29,7 @@ public class WorldMenuBar extends JMenuBar {
 		play.setText(">");
 		ActionListener pause = event -> {
 			try {
-				world.togglePlay();
+				mondo.togglePlay();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -39,10 +39,10 @@ public class WorldMenuBar extends JMenuBar {
 
 		add(Box.createHorizontalStrut(60));
 
-		location = new MenuTextField("Partenza", world);
+		location = new MenuTextField("Partenza", mondo);
 		add(location);
 
-		destination = new MenuTextField("Destinazione", world);
+		destination = new MenuTextField("Destinazione", mondo);
 		add(destination);
 
 		JButton go = new JButton("Go!");
@@ -60,7 +60,7 @@ public class WorldMenuBar extends JMenuBar {
 
 		JButton help = new JButton("?");
 		help.setToolTipText("Open instructions dialog.");
-		ActionListener helpButton = event -> world.openInstructions();
+		ActionListener helpButton = event -> mondo.openInstructions();
 		help.addActionListener(helpButton);
 		add(help);
 	}
@@ -69,11 +69,11 @@ public class WorldMenuBar extends JMenuBar {
 		String adr = location.getText();
 		String adr2 = destination.getText();
 		if (!"Departure".equals(adr) && !"Destination".equals(adr2)) {
-			new AddressThread(world, adr, adr2).start();
+			new AddressThread(mondo, adr, adr2).start();
 			location.reset();
 			destination.reset();
 		}
-		world.setAutoLand();
+		mondo.setAutoLand();
 	}
 
 	public void togglePauseText() {
