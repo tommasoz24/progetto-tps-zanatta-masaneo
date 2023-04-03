@@ -3,7 +3,7 @@ package gestione_aerei;
 import java.io.IOException;
 
 public class GameLoopThread extends Thread {
-	private World world;
+	private final World world;
 
 	public GameLoopThread(World world) {
 		this.world = world;

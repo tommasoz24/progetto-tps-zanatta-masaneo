@@ -1,72 +1,39 @@
 package gestione_aerei;
 
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.IOException;
-
-import javax.swing.Box;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JMenuBar;
-
 import address.AddressThread;
 
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.io.Serial;
+
 public class WorldMenuBar extends JMenuBar {
+	@Serial
 	private static final long serialVersionUID = 1L;
-	private JButton play;
-	private MenuTextField location;
-	private MenuTextField destination;
-	private World world;
-
-	private ActionListener click = new ActionListener() {
-		@Override
-		public void actionPerformed(ActionEvent event) {
-			try {
-				gobutton();
-			}
-			catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-	};
-
-	private ActionListener pause = new ActionListener() {
-		@Override
-		public void actionPerformed(ActionEvent event) {
-			try {
-				world.togglePlay();
-			}
-			catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-	};
-
-	private ActionListener muteButton = new ActionListener() {
-		@Override
-		public void actionPerformed(ActionEvent event) {
-			world.toggleMute();
-		}
-	};
-
-	private ActionListener helpButton = new ActionListener() {
-		@Override
-		public void actionPerformed(ActionEvent event) {
-			world.openInstructions();
-		}
-	};
+	private final JButton play;
+	private final MenuTextField location;
+	private final MenuTextField destination;
+	private final World world;
 
 	public WorldMenuBar(World world) {
 		this.world = world;
 		setLayout(new FlowLayout(FlowLayout.CENTER, 15, 3));
 
 		JCheckBox mute = new JCheckBox("Muto");
+		ActionListener muteButton = event -> world.toggleMute();
 		mute.addActionListener(muteButton);
 		add(mute);
 
 		play = new JButton();
 		play.setText(">");
+		ActionListener pause = event -> {
+			try {
+				world.togglePlay();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		};
 		play.addActionListener(pause);
 		add(play);
 
@@ -79,6 +46,13 @@ public class WorldMenuBar extends JMenuBar {
 		add(destination);
 
 		JButton go = new JButton("Go!");
+		ActionListener click = event -> {
+			try {
+				gobutton();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		};
 		go.addActionListener(click);
 		add(go);
 
@@ -86,6 +60,7 @@ public class WorldMenuBar extends JMenuBar {
 
 		JButton help = new JButton("?");
 		help.setToolTipText("Open instructions dialog.");
+		ActionListener helpButton = event -> world.openInstructions();
 		help.addActionListener(helpButton);
 		add(help);
 	}

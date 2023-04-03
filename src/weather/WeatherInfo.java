@@ -67,7 +67,7 @@ public class WeatherInfo extends Container {
 
 		// retrieve the current temperature
 		double temp = now.getMain().getTemp();
-		currentWeather.setText(temp + "\u00b0" + 'F');
+		currentWeather.setText(temp + "°" + 'F');
 
 		// temperature turn red if hot and blue if cold
 		if (temp <= 40) {
@@ -125,8 +125,8 @@ public class WeatherInfo extends Container {
 				logsym = 'W';
 			}
 
-			JLabel label = new JLabel(formatter.format(Math.abs(lat)) + "\u00b0" + latsym + ", "
-					+ formatter.format(Math.abs(log)) + "\u00b0" + logsym);
+			JLabel label = new JLabel(formatter.format(Math.abs(lat)) + "°" + latsym + ", "
+					+ formatter.format(Math.abs(log)) + "°" + logsym);
 			label.setHorizontalAlignment(JLabel.CENTER);
 			label.setBorder(new EmptyBorder(9, 0, 0, 0));
 			conditionsCont.add(label);

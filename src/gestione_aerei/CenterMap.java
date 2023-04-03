@@ -9,6 +9,7 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.Serial;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DecimalFormat;
@@ -20,6 +21,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JMenuBar;
 
 public class CenterMap extends MapPanel {
+	@Serial
 	private static final long serialVersionUID = 1L;
 	private double currentLat;
 	private double currentLog;
@@ -137,8 +139,8 @@ public class CenterMap extends MapPanel {
 			logsym = 'W';
 		}
 		g.setFont(latLogFont);
-		g.drawString(formatter.format(Math.abs(currentLat)) + "\u00b0" + latsym + ", "
-				+ formatter.format(Math.abs(currentLog)) + "\u00b0" + logsym, 10, 50);
+		g.drawString(formatter.format(Math.abs(currentLat)) + "°" + latsym + ", "
+				+ formatter.format(Math.abs(currentLog)) + "°" + logsym, 10, 50);
 	}
 
 	public void loadImg() throws MalformedURLException {

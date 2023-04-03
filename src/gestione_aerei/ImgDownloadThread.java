@@ -5,8 +5,8 @@ import java.net.URL;
 import javax.swing.ImageIcon;
 
 public class ImgDownloadThread extends Thread {
-	private URL url;
-	private ImageLoadable component;
+	private final URL url;
+	private final ImageLoadable component;
 
 	public ImgDownloadThread(URL url, ImageLoadable component) {
 		this.url = url;

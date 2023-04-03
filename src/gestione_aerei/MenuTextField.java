@@ -7,10 +7,12 @@ import java.awt.event.FocusEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
+import java.io.Serial;
 
 import javax.swing.JTextField;
 
 public class MenuTextField extends JTextField {
+	@Serial
 	private static final long serialVersionUID = 1L;
 	private String name;
 

@@ -4,11 +4,13 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.Serial;
 
 import javax.imageio.ImageIO;
 import javax.swing.JComponent;
 
 public class InstructionsComponent extends JComponent {
+	@Serial
 	private static final long serialVersionUID = 1L;
 	private BufferedImage img;
 
@@ -51,12 +53,12 @@ public class InstructionsComponent extends JComponent {
 		g.drawString("Comandi:", 10, i += k);
 		g.drawString("Le quattro frecce                     controllano la direzione dell'aereo", 40,
 				i += j);
-		g.drawString("\u2190", 140, i);
-		g.drawString("\u2191", 157, i - 10);
-		g.drawString("\u2192", 170, i);
-		g.drawString("\u2193", 157, i + 5);
+		g.drawString("←", 140, i);
+		g.drawString("↑", 157, i - 10);
+		g.drawString("→", 170, i);
+		g.drawString("↓", 157, i + 5);
 		g.drawString("-/+ della tastiera servono per diminuire o aumentare la velocità", 40, i += j);
-		g.drawString("Se hai bisogno di aiuto premi il tasto ? in basso a sinistra.", 40, i += j);
+		g.drawString("Se hai bisogno di aiuto premi il tasto ? in basso a sinistra.", 40, i + j);
 
 	}
 }

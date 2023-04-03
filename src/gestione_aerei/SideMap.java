@@ -2,12 +2,14 @@ package gestione_aerei;
 
 import java.awt.Dimension;
 import java.io.IOException;
+import java.io.Serial;
 import java.net.MalformedURLException;
 
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 
 public class SideMap extends JPanel {
+	@Serial
 	private static final long serialVersionUID = 1L;
 	private int direction;
 	private final PathMap pathMap;
@@ -19,20 +21,17 @@ public class SideMap extends JPanel {
 		setPreferredSize(new Dimension(width, height));
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 
-		final double startlat = currentLat;
-		final double startlong = currentLong;
-
 		pathMap = new PathMap();
 		add(pathMap);
 
 		this.direction = direction;
-		navigationMap = new NavigationMap(startlat, startlong);
+		navigationMap = new NavigationMap(currentLat, currentLong);
 		navigationMap.setDegree(direction);
 
 		// 1 degree lat = 69 miles
 		// if speed = 69/hr - moving 1 degree lat/hr (or per second in
 		// simulation)
-		updateMap(69, direction, currentLat, currentLong);
+		updateMap(69, currentLat, currentLong);
 
 		add(navigationMap);
 	}
@@ -47,7 +46,7 @@ public class SideMap extends JPanel {
 		navigationMap.newMap(startlat, startlong);
 	}
 
-	public void updateMap(int speed, int direction, double currentLat, double currentLong) throws IOException {
+	public void updateMap(int speed, double currentLat, double currentLong) throws IOException {
 		navigationMap.update(speed, this.direction, currentLat, currentLong);
 	}
 

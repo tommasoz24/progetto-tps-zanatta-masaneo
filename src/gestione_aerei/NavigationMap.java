@@ -4,22 +4,23 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.io.IOException;
+import java.io.Serial;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Objects;
 
 import javax.imageio.ImageIO;
 import javax.swing.Box;
 import javax.swing.JMenuBar;
 
 public class NavigationMap extends MapPanel {
+	@Serial
 	private static final long serialVersionUID = 1L;
 	private double currentlat;
 	private double currentlong;
 	private double diffBuffer;
 	private Plane plane;
 
-	@SuppressWarnings("unused")
-	private String feature;
 	private MenuZoom zoomPanel;
 
 	public NavigationMap(double startlat, double startlong) throws IOException {
@@ -34,7 +35,6 @@ public class NavigationMap extends MapPanel {
 		JMenuBar menu = new JMenuBar();
 		view = "terrain";
 		menu.add(new MenuView(this));
-		feature = "transit.station.airports";
 		menu.add(Box.createHorizontalStrut(95));
 		zoomPanel = new MenuZoom(this, 5);
 		menu.add(zoomPanel);
@@ -44,7 +44,7 @@ public class NavigationMap extends MapPanel {
 
 		diffBuffer = 0;
 
-		img = ImageIO.read(getClass().getResource("immagini/navigationMap.png"));
+		img = ImageIO.read(Objects.requireNonNull(getClass().getResource("immagini/navigationMap.png")));
 	}
 
 	public void update(int speed, int direction, double currentlat, double currentlong) throws MalformedURLException {
@@ -65,32 +65,18 @@ public class NavigationMap extends MapPanel {
 			diffBuffer = 0;
 		}
 
-		if (diff % 1 == 0) {
-			difference = (int) diff;
-		}
-		else {
+		if (diff % 1 != 0) {
 			diffBuffer = diff % 1;
-			difference = (int) diff;
 		}
+		difference = (int) diff;
 
 		// set the direction according the the arrow key or number the user pressed
 		switch (direction) {
-			case 2: {
-				plane.changeY(difference);
-				break;
-			}
-			case 4: {
-				plane.changeX(-difference);
-				break;
-			}
-			case 6: {
-				plane.changeX(difference);
-				break;
-			}
-			case 8: {
-				plane.changeY(-difference);
-				break;
-			}
+			case 2 -> plane.changeY(difference);
+			case 4 -> plane.changeX(-difference);
+			case 6 -> plane.changeX(difference);
+			case 8 -> plane.changeY(-difference);
+			default -> throw new IllegalStateException("Unexpected value: " + direction);
 		}
 
 		int x = plane.getX();
@@ -151,11 +137,6 @@ public class NavigationMap extends MapPanel {
 				+ "&key=AIzaSyAirHEsA08agmW9uizDvXagTjWS3mRctPE");
 
 		new ImgDownloadThread(url, this).start();
-	}
-
-	public void updateFeature(String feature) throws MalformedURLException {
-		this.feature = feature.toLowerCase();
-		loadImg();
 	}
 
 	public void updateView(String view) throws MalformedURLException {

@@ -1,12 +1,14 @@
 package gestione_aerei;
 
 import java.awt.Image;
+import java.io.Serial;
 
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.border.BevelBorder;
 
 public class MapPanel extends JPanel implements ImageLoadable {
+	@Serial
 	private static final long serialVersionUID = 1L;
 	protected int width;
 	protected int height;

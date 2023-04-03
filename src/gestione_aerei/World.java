@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
+import java.io.Serial;
+import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
 
 import javax.imageio.ImageIO;
@@ -17,6 +19,7 @@ import javax.swing.KeyStroke;
 import weather.WeatherCont;
 
 public class World extends JFrame {
+	@Serial
 	private static final long serialVersionUID = 1L;
 
 	private static final int UP = 8;
@@ -27,7 +30,7 @@ public class World extends JFrame {
 	private static final int DECREASE = -3;
 	
 	protected WorldMenuBar menu;
-	private InstructionDialog inst;
+	private final InstructionDialog inst;
 
 	// three panels
 	private final SideMap sideMap;
@@ -73,7 +76,7 @@ public class World extends JFrame {
 		currentLog = -73.779277;
 
 		// create window icon (only visible on mac when minimize window)
-		setIconImage(ImageIO.read(getClass().getResource("immagini/airplane.jpg")));
+		setIconImage(ImageIO.read(Objects.requireNonNull(getClass().getResource("immagini/airplane.jpg"))));
 		setFocusable(true);
 
 		menu = new WorldMenuBar(this);
@@ -164,10 +167,6 @@ public class World extends JFrame {
 		sideMap.setDirection(direction);
 	}
 
-	public int getDirection() {
-		return direction;
-	}
-
 	public void adjustSpeed(int adjust) {
 		speed += adjust;
 		if (speed < 0) {
@@ -188,28 +187,16 @@ public class World extends JFrame {
 			// 69 miles per hour = 1 degree lat per hour
 			double difference = speed / 69.0;
 			switch (direction) {
-				case UP: {
-					currentLat += difference;
-					break;
-				}
-				case DOWN: {
-					currentLat -= difference;
-					break;
-				}
-				case LEFT: {
-					currentLog -= difference;
-					break;
-				}
-				case RIGHT: {
-					currentLog += difference;
-					break;
-				}
+				case UP -> currentLat += difference;
+				case DOWN -> currentLat -= difference;
+				case LEFT -> currentLog -= difference;
+				case RIGHT -> currentLog += difference;
 			}
 
 			// update all panels
 			centerMap.updateMap(speed, direction, difference, currentLat, currentLog, false);
 			weather.updateCurrent(currentLat, currentLog);
-			sideMap.updateMap(speed, direction, currentLat, currentLog);
+			sideMap.updateMap(speed, currentLat, currentLog);
 
 			// determine if reached destination
 			if (autoLand && speed > 0) {
@@ -242,7 +229,7 @@ public class World extends JFrame {
 		}
 	}
 
-	public void landPlane() throws IOException, InterruptedException {
+	public void landPlane() throws InterruptedException {
 		autoLand = false;
 
 		// when land, plane stops and so the speed becomes 0
@@ -278,12 +265,7 @@ public class World extends JFrame {
 	}
 
 	public void togglePlay() throws InterruptedException {
-		if (paused) {
-			paused = false;
-		}
-		else {
-			paused = true;
-		}
+		paused = !paused;
 		menu.togglePauseText();
 	}
 
@@ -316,6 +298,7 @@ public class World extends JFrame {
 	// pause action
 	@SuppressWarnings("unused")
 	private class PauseAction extends AbstractAction {
+		@Serial
 		private static final long serialVersionUID = 1L;
 
 		@Override
@@ -327,12 +310,14 @@ public class World extends JFrame {
 				e.printStackTrace();
 			}
 		}
-	};
+
+	}
 
 	// direction action
 	private class Direction extends AbstractAction {
+		@Serial
 		private static final long serialVersionUID = 1L;
-		private int direction;
+		private final int direction;
 
 		public Direction(int direction) {
 			this.direction = direction;
@@ -342,12 +327,13 @@ public class World extends JFrame {
 		public void actionPerformed(ActionEvent arg0) {
 			setDirection(direction);
 		}
-	};
+	}
 
 	// speed Action
 	private class Speed extends AbstractAction {
+		@Serial
 		private static final long serialVersionUID = 1L;
-		private int speed;
+		private final int speed;
 
 		public Speed(int speed) {
 			this.speed = speed;
@@ -357,5 +343,5 @@ public class World extends JFrame {
 		public void actionPerformed(ActionEvent arg0) {
 			adjustSpeed(speed);
 		}
-	};
+	}
 }

@@ -5,6 +5,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.Objects;
 
 import javax.imageio.ImageIO;
 
@@ -12,38 +13,26 @@ public class Plane {
 	private int x;
 	private int y;
 	private int degrees;
-	private BufferedImage planeImg;
+	private final BufferedImage planeImg;
 
 	public Plane(int x, int y) throws IOException {
 		this.x = x;
 		this.y = y;
-		planeImg = ImageIO.read(getClass().getResource("immagini/airplane.jpg"));
+		planeImg = ImageIO.read(Objects.requireNonNull(getClass().getResource("immagini/airplane.jpg")));
 	}
 
 	public void setDegree(int direction) {
 		switch (direction) {
-			case 2: {
-				degrees = 135;
-				break;
-			}
-			case 4: {
-				degrees = -135;
-				break;
-			}
-			case 6: {
-				degrees = 45;
-				break;
-			}
-			case 8: {
-				degrees = -45;
-				break;
-			}
+			case 2 -> degrees = 135;
+			case 4 -> degrees = -135;
+			case 6 -> degrees = 45;
+			case 8 -> degrees = -45;
 		}
 	}
 
 	public void paintComponent(Graphics g) {
-		AffineTransform tx = AffineTransform.getRotateInstance(Math.toRadians(degrees), planeImg.getWidth() / 2,
-				planeImg.getHeight() / 2);
+		AffineTransform tx = AffineTransform.getRotateInstance(Math.toRadians(degrees), (double) planeImg.getWidth() / 2,
+				(double) planeImg.getHeight() / 2);
 		AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
 		g.drawImage(op.filter(planeImg, null), x, y, 20, 20, null);
 	}
