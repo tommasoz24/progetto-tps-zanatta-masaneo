@@ -68,7 +68,7 @@ public class MeteoInfo extends Container {
 
 
 		double temp = now.getMain().getTemp();
-		currentWeather.setText(temp + "°" + 'F');
+		currentWeather.setText(temp + "°" + 'C');
 
 
 		if (temp <= 40) {

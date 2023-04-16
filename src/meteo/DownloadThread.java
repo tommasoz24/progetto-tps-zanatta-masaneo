@@ -16,7 +16,7 @@ public class DownloadThread extends Thread {
 
 	public DownloadThread(MeteoInfo info, double lat, double lon) throws MalformedURLException {
 		this.info = info;
-		url = new URL("http://api.openweathermap.org/data/2.5/weather?&lat=" + lat + "&lon=" + lon + "&units=imperial&APPID=6498c9bbba6235eba0bfb10829f70f48&lang=it");
+		url = new URL("http://api.openweathermap.org/data/2.5/weather?&lat=" + lat + "&lon=" + lon + "&units=metric&APPID=6498c9bbba6235eba0bfb10829f70f48&lang=it");
 	}
 
 	@Override
@@ -25,6 +25,7 @@ public class DownloadThread extends Thread {
 			URLConnection connection = url.openConnection();
 			InputStream in = connection.getInputStream();
 			String json = IOUtils.toString(in);
+			System.out.println(json);
 			MeteoNow now = new Gson().fromJson(json, MeteoNow.class);
 			info.displayWeather(now);
 		}

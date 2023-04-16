@@ -35,6 +35,7 @@ public class MappaPercorso extends PannelloMappa {
 				+ "&path=color:0x0000ff|weight:5|" + start + "|" + end + "&maptype=" + view
 				+ "&markers=size:mid%7Ccolor:red%7C" + start + "%7C" + end
 				+ "&key=AIzaSyAirHEsA08agmW9uizDvXagTjWS3mRctPE");
+		System.out.println(url);
 		caricaImg();
 		repaint();
 	}
